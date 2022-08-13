@@ -16,6 +16,9 @@ export type TodolistsType = {
     title: string
     filterValue: FilterValueType
 }
+export type TasksObjType = {
+    [key: string]: Array<TaskType>
+}
 
 function App() {
     let [todolists, setTodolists] = useState<Array<TodolistsType>>([
@@ -23,10 +26,6 @@ function App() {
         {id: todoListID2, title: 'What to buy', filterValue: 'All'},
     ])
 
-
-    type TasksObjType = {
-        [key: string]: Array<TaskType>
-    }
 
     let [tasksObj, setTasksObj] = useState<TasksObjType>(
         {
@@ -51,15 +50,6 @@ function App() {
         tasksObj[todoListID] = [newTask, ...tasksObj[todoListID]]
         setTasksObj({...tasksObj})
     }
-    //For filter button ====================================================================
-    const changeFilterValue = (id: string, filterValue: FilterValueType) => {
-        let todolist = todolists.find(el => el.id === id)
-        if (todolist) {
-            todolist.filterValue = filterValue
-        }
-        let copyTodolist = [...todolists]
-        setTodolists(copyTodolist)
-    }
 
     //Task status changer ====================================================================
     const taskStatusChanger = (taskId: string, isDone: boolean, todoListID: string) => {
@@ -77,6 +67,9 @@ function App() {
         }
         setTasksObj({...tasksObj})
     }
+
+
+
     //Todolist title changer ====================================================================
     const todolistTitleChanger = (newTitle: string, todoListID: string) => {
         let todolist = todolists.find(el => el.id === todoListID)
@@ -84,6 +77,15 @@ function App() {
             todolist.title = newTitle
         }
         setTodolists([...todolists])
+    }
+    //For filter button ====================================================================
+    const changeFilterValue = (id: string, filterValue: FilterValueType) => {
+        let todolist = todolists.find(el => el.id === id)
+        if (todolist) {
+            todolist.filterValue = filterValue
+        }
+        let copyTodolist = [...todolists]
+        setTodolists(copyTodolist)
     }
 
     const removeTodolist = (todolistId: string) => {

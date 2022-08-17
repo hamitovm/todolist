@@ -1,8 +1,18 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import AppWithRedux from "./AppWithRedux";
+import {Provider} from "react-redux";
+import {store} from "./state/store";
+
+ReactDOM.render(
+    <Provider store={store}>
+        <AppWithRedux/>
+    </Provider>,
+    document.getElementById('root'))
+
 
 // ReactDOM.render(
 //   <React.StrictMode>
@@ -10,12 +20,12 @@ import reportWebVitals from './reportWebVitals';
 //   </React.StrictMode>,
 //   document.getElementById('root')
 // );
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLDivElement);
-try {
-    root.render(<App />);
-} catch (error) {
-    console.error(error);
-}
+// const root = ReactDOM.createRoot(document.getElementById("root") as HTMLDivElement);
+// try {
+//     root.render(<AppWithRedux/>);
+// } catch (error) {
+//     console.error(error);
+// }
 
 
 // If you want to start measuring performance in your app, pass a function

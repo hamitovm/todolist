@@ -1,107 +1,80 @@
-import React, {useState} from 'react';
+import React, {useReducer, useState} from 'react';
 import './App.css';
 import {TaskType, TodoList} from "./TodoList";
 import {v1} from "uuid";
 import {AddItemForm} from "./AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
 import {Menu} from "@mui/icons-material";
+import {
+    addTodolistAC,
+    changeTodolistFilterAC,
+    changeTodolistTitleAC,
+    removeTodolistAC,
+    todolistsReducer
+} from "./state/todolists-reducer";
+import {addTaskAC, removeTaskAC, tasksReducer, taskStatusChangerAC, taskTitleChangerAC} from "./state/tasks-reducer";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootStateType} from "./state/store";
 
 export type  FilterValueType = 'All' | 'Active' | 'Completed'
 
-let todoListID1 = v1()
-let todoListID2 = v1()
 
 export type TodolistsType = {
     id: string
     title: string
     filterValue: FilterValueType
 }
-export type TasksObjType = {
+export type TasksType = {
     [key: string]: Array<TaskType>
 }
 
-function App() {
-    let [todolists, setTodolists] = useState<Array<TodolistsType>>([
-        {id: todoListID1, title: 'What to learn', filterValue: 'All'},
-        {id: todoListID2, title: 'What to buy', filterValue: 'All'},
-    ])
+function AppWithRedux() {
+    //Общий диспатч редакса
+    const dispatch = useDispatch()
+
+    //Доставание стейта, в типизации первым параметром указывается тип стейта, вторым того, что берется из него
+    const todolists = useSelector<AppRootStateType, Array<TodolistsType>>(state => state.todolists)
+    const tasks = useSelector<AppRootStateType, TasksType>(state => state.tasks)
 
 
-    let [tasksObj, setTasksObj] = useState<TasksObjType>(
-        {
-            [todoListID1]: [
-                {id: v1(), title: 'CSS', isDone: true},
-                {id: v1(), title: 'JS', isDone: true},
-                {id: v1(), title: 'React', isDone: false}],
-            [todoListID2]: [
-                {id: v1(), title: 'Python', isDone: true},
-                {id: v1(), title: 'Django', isDone: true},
-                {id: v1(), title: 'PPL', isDone: false}]
-        }
-    )
+
     //Task remover ========================================================================
     const removeTask = (id: string, todoListID: string) => {
-        tasksObj[todoListID] = tasksObj[todoListID].filter((el: TaskType) => el.id !== id)
-        setTasksObj({...tasksObj})
+        dispatch(removeTaskAC(todoListID, id))
     }
     //Task adder ========================================================================
     const taskAdder = (inputValue: string, todoListID: string) => {
-        let newTask: TaskType = {id: v1(), title: inputValue, isDone: false}
-        tasksObj[todoListID] = [newTask, ...tasksObj[todoListID]]
-        setTasksObj({...tasksObj})
+        dispatch(addTaskAC(todoListID,inputValue))
     }
 
     //Task status changer ====================================================================
     const taskStatusChanger = (taskId: string, isDone: boolean, todoListID: string) => {
-        let task = tasksObj[todoListID].find(el => el.id === taskId)
-        if (task) {
-            task.isDone = isDone
-        }
-        setTasksObj({...tasksObj})
+        dispatch(taskStatusChangerAC(todoListID, taskId, isDone))
     }
     //Task title changer ====================================================================
     const taskTitleChanger = (taskId: string, newTitle: string, todoListID: string) => {
-        let task = tasksObj[todoListID].find(el => el.id === taskId)
-        if (task) {
-            task.title = newTitle
-        }
-        setTasksObj({...tasksObj})
+        dispatch(taskTitleChangerAC(todoListID, taskId, newTitle))
     }
 
 
 
     //Todolist title changer ====================================================================
     const todolistTitleChanger = (newTitle: string, todoListID: string) => {
-        let todolist = todolists.find(el => el.id === todoListID)
-        if (todolist) {
-            todolist.title = newTitle
-        }
-        setTodolists([...todolists])
+        dispatch(changeTodolistTitleAC(todoListID, newTitle))
     }
     //For filter button ====================================================================
     const changeFilterValue = (id: string, filterValue: FilterValueType) => {
-        let todolist = todolists.find(el => el.id === id)
-        if (todolist) {
-            todolist.filterValue = filterValue
-        }
-        let copyTodolist = [...todolists]
-        setTodolists(copyTodolist)
+        dispatch(changeTodolistFilterAC(id, filterValue))
     }
 
     const removeTodolist = (todolistId: string) => {
-        setTodolists(todolists.filter(el => el.id !== todolistId))
-        delete tasksObj[todolistId]
-        setTasksObj({...tasksObj})
+        dispatch(removeTodolistAC(todolistId))
     }
     //FOR NEW TODOLIST==============================================================
-    const todolistAdder = (todolistInputValue: string,) => {
-        let newTodolistId = v1()
-        let newTodolist: TodolistsType = {id: newTodolistId, title: todolistInputValue, filterValue: 'All'}
-        tasksObj[newTodolistId] = []
-        setTasksObj({...tasksObj})
-        setTodolists([newTodolist, ...todolists])
+    const todolistAdder = (todolistInputValue: string) => {
+        const action = addTodolistAC(todolistInputValue)
+        dispatch(action)
     }
-
 
     return (
         <div>
@@ -127,7 +100,7 @@ function App() {
                     </Grid>
                     <Grid container spacing={3}>
                         {todolists.map(el => {
-                            let filteredTask1 = tasksObj[el.id]
+                            let filteredTask1 = tasks[el.id]
                             if (el.filterValue === 'Active') {
                                 filteredTask1 = filteredTask1.filter((el: TaskType) => !el.isDone)
                             }
@@ -165,4 +138,4 @@ function App() {
 }
 
 
-export default App;
+export default AppWithRedux;

@@ -144,12 +144,12 @@ function App() {
                                             // tasks={filteredTask1}
                                             // taskRemover={removeTask}
                                             filterValue={el.filterValue}
-                                            setFilterValue={changeFilterValue}
+                                            // setFilterValue={changeFilterValue}
                                             // taskAdder={taskAdder}
                                             // taskStatusChanger={taskStatusChanger}
                                             // taskTitleChanger={taskTitleChanger}
-                                            todolistTitleChanger={todolistTitleChanger}
-                                            removeTodolist={removeTodolist}
+                                            // todolistTitleChanger={todolistTitleChanger}
+                                            // removeTodolist={removeTodolist}
                                         />
                                     </Paper>
 

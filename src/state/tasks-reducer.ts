@@ -114,7 +114,6 @@ export const tasksReducer = (state: TasksObjType = initialState, action: ActionT
                 ...state,
                 [action.todolistId]: []
             }
-            console.log(stateToReturn)
             return stateToReturn
         case 'REMOVE-TODOLIST':
             const stateCopy = {...state}

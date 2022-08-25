@@ -1,4 +1,4 @@
-import React, {useReducer, useState} from 'react';
+import React, {useCallback, useReducer, useState} from 'react';
 import './App.css';
 import {TaskType, TodoList} from "./TodoList";
 import {v1} from "uuid";
@@ -29,52 +29,53 @@ export type TasksType = {
 }
 
 function AppWithRedux() {
+    console.log('AppWithRedux called')
     //Общий диспатч редакса
     const dispatch = useDispatch()
 
     //Доставание стейта, в типизации первым параметром указывается тип стейта, вторым того, что берется из него
     const todolists = useSelector<AppRootStateType, Array<TodolistsType>>(state => state.todolists)
-    const tasks = useSelector<AppRootStateType, TasksType>(state => state.tasks)
+    // const tasks = useSelector<AppRootStateType, TasksType>(state => state.tasks)
 
 
 
     //Task remover ========================================================================
-    const removeTask = (id: string, todoListID: string) => {
-        dispatch(removeTaskAC(todoListID, id))
-    }
+    // const removeTask = useCallback((id: string, todoListID: string) => {
+    //     dispatch(removeTaskAC(todoListID, id))
+    // }, [])
     //Task adder ========================================================================
-    const taskAdder = (inputValue: string, todoListID: string) => {
-        dispatch(addTaskAC(todoListID,inputValue))
-    }
+    // const taskAdder = useCallback((inputValue: string, todoListID: string) => {
+    //     dispatch(addTaskAC(todoListID,inputValue))
+    // }, [])
 
     //Task status changer ====================================================================
-    const taskStatusChanger = (taskId: string, isDone: boolean, todoListID: string) => {
-        dispatch(taskStatusChangerAC(todoListID, taskId, isDone))
-    }
+    // const taskStatusChanger = useCallback((taskId: string, isDone: boolean, todoListID: string) => {
+    //     dispatch(taskStatusChangerAC(todoListID, taskId, isDone))
+    // }, [])
     //Task title changer ====================================================================
-    const taskTitleChanger = (taskId: string, newTitle: string, todoListID: string) => {
-        dispatch(taskTitleChangerAC(todoListID, taskId, newTitle))
-    }
+    // const taskTitleChanger = useCallback((taskId: string, newTitle: string, todoListID: string) => {
+    //     dispatch(taskTitleChangerAC(todoListID, taskId, newTitle))
+    // }, [])
 
 
 
     //Todolist title changer ====================================================================
-    const todolistTitleChanger = (newTitle: string, todoListID: string) => {
+    const todolistTitleChanger = useCallback((newTitle: string, todoListID: string) => {
         dispatch(changeTodolistTitleAC(todoListID, newTitle))
-    }
+    }, [dispatch])
     //For filter button ====================================================================
-    const changeFilterValue = (id: string, filterValue: FilterValueType) => {
+    const changeFilterValue = useCallback((id: string, filterValue: FilterValueType) => {
         dispatch(changeTodolistFilterAC(id, filterValue))
-    }
+    }, [dispatch])
 
-    const removeTodolist = (todolistId: string) => {
+    const removeTodolist = useCallback((todolistId: string) => {
         dispatch(removeTodolistAC(todolistId))
-    }
+    }, [dispatch])
     //FOR NEW TODOLIST==============================================================
-    const todolistAdder = (todolistInputValue: string) => {
+    const todolistAdder = useCallback((todolistInputValue: string) => {
         const action = addTodolistAC(todolistInputValue)
         dispatch(action)
-    }
+    }, [dispatch])
 
     return (
         <div>
@@ -100,15 +101,15 @@ function AppWithRedux() {
                     </Grid>
                     <Grid container spacing={3}>
                         {todolists.map(el => {
-                            let filteredTask1 = tasks[el.id]
-                            if (el.filterValue === 'Active') {
-                                filteredTask1 = filteredTask1.filter((el: TaskType) => !el.isDone)
-                            }
-                            if (el.filterValue === 'Completed') {
-                                filteredTask1 = filteredTask1.filter((el: TaskType) => el.isDone)
-                            }
+                            // let filteredTask1 = tasks[el.id]
+                            // if (el.filterValue === 'Active') {
+                            //     filteredTask1 = filteredTask1.filter((el: TaskType) => !el.isDone)
+                            // }
+                            // if (el.filterValue === 'Completed') {
+                            //     filteredTask1 = filteredTask1.filter((el: TaskType) => el.isDone)
+                            // }
                             return (
-                                <Grid item>
+                                <Grid item key={el.id}>
                                     <Paper style={ {padding: '10px'}}>
                                         <TodoList
                                             key={el.id}
@@ -117,15 +118,14 @@ function AppWithRedux() {
                                             // tasks={filteredTask1}
                                             // taskRemover={removeTask}
                                             filterValue={el.filterValue}
-                                            setFilterValue={changeFilterValue}
+                                            // setFilterValue={changeFilterValue}
                                             // taskAdder={taskAdder}
                                             // taskStatusChanger={taskStatusChanger}
                                             // taskTitleChanger={taskTitleChanger}
-                                            todolistTitleChanger={todolistTitleChanger}
-                                            removeTodolist={removeTodolist}
+                                            // todolistTitleChanger={todolistTitleChanger}
+                                            // removeTodolist={removeTodolist}
                                         />
                                     </Paper>
-
                                 </Grid>
 
                             )

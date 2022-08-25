@@ -1,11 +1,15 @@
-import React, {ChangeEvent, KeyboardEvent, useState} from "react";
+import React, {ChangeEvent, KeyboardEvent, useCallback, useState} from "react";
 import {TextField} from "@mui/material";
+import AppWithRedux from "./AppWithRedux";
 
 type EditableSpanPropsType = {
     title: string
     onChange: (newTitle: string) => void
 }
-export const EditableSpan = (props: EditableSpanPropsType) => {
+
+
+export const EditableSpan = React.memo((props: EditableSpanPropsType) => {
+    console.log('EditableSpan called')
     let [editMode, setEditMode] = useState<boolean>(false)
     let [inputValue, setInputValue] = useState('')
     //Error setter ========================================================================
@@ -25,12 +29,12 @@ export const EditableSpan = (props: EditableSpanPropsType) => {
         setEditMode(true)
         setInputValue(props.title)
     }
-    const activateViewMode = () => {
+    const activateViewMode = useCallback(() => {
         setEditMode(false)
         if (inputValue.trim() !== '') {
             props.onChange(inputValue)
         }
-    }
+    }, [inputValue])
 
     let EditableSpanElement = <span onDoubleClick={activateEditMode}>{props.title}</span>
     if (editMode) {
@@ -55,4 +59,4 @@ export const EditableSpan = (props: EditableSpanPropsType) => {
         </span>
 
     )
-}
+})

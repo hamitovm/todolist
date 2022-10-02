@@ -7,7 +7,6 @@ type AddItemFormPropsType = {
     itemAdder: (inputValue: string) => void
 }
 
-
 export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
     console.log('AddItemForm called')
 

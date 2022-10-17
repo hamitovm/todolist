@@ -310,54 +310,86 @@ export const UpdateTask = () => {
     const [state, setState] = useState<any>(null)
 
     const [todolistId, setTodolistId] = useState<string>('')
-    const onTodolistIdInputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setTodolistId(e.currentTarget.value)
-    }
-
     const [taskId, setTaskId] = useState<string>('')
-    const onTaskIdInputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setTaskId(e.currentTarget.value)
-    }
     const [taskNewTitle, setTaskNewTitle] = useState<string>('')
-    const onTaskNewTitleInputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-        setTaskNewTitle(e.currentTarget.value)
-    }
+    const [description, setDescription] = useState<string>('')
+    const [status, setStatus] = useState<number>(0)
+    const [priority, setPriority] = useState<number>(0)
+    const [startDate, setStartDate] = useState<string>('')
+    const [deadline, setDeadline] = useState<string>('')
 
     const onUpdateTaskButtonClick = () => {
-        todolistsAPI.updateTask(todolistId, taskId, taskNewTitle)
+        const updateTaskData = {
+            title: taskNewTitle,
+            description,
+            status,
+            priority,
+            startDate,
+            deadline,
+        }
+        todolistsAPI.updateTask(todolistId, taskId, updateTaskData)
             .then(response => setState(response.data))
     }
 
-    // useEffect(() => {
-    //     const todolistId = 'db79b41a-7a65-49d6-b11b-aea18fcf7fff'
-    //     const taskId = '51f223bd-6de6-4443-8119-521c905667f9'
-    //     const title = 'book to changed task name'
-    //
-    //     // здесь мы будем делать запрос и ответ закидывать в стейт.
-    //     // который в виде строки будем отображать в div-ке
-    //     todolistsAPI.updateTask(todolistId, taskId, title)
-    //         .then(response => setState(response.data))
-    //
-    // }, [])
     return (
         <div>
             <p>
                 <input
                     placeholder='Enter todolist ID'
                     value={todolistId}
-                    onChange={onTodolistIdInputChangeHandler}/>
+                    onChange={(e) => {
+                        setTodolistId(e.currentTarget.value)}}/>
             </p>
             <p>
                 <input
                     placeholder='Enter task id'
                     value={taskId}
-                    onChange={onTaskIdInputChangeHandler}/>
+                    onChange={(e) => {
+                        setTaskId(e.currentTarget.value)}}/>
             </p>
             <p>
                 <input
                     placeholder='Enter new task title'
                     value={taskNewTitle}
-                    onChange={onTaskNewTitleInputChangeHandler}/>
+                    onChange={ (e) => {
+                        setTaskNewTitle(e.currentTarget.value)}}/>
+            </p>
+            <p>
+                <input
+                    placeholder='Enter task description'
+                    value={description}
+                    onChange={ (e) => {
+                        setDescription(e.currentTarget.value)}}/>
+            </p>
+            <p>
+                <input
+                    placeholder='Enter task status'
+                    value={status}
+                    type='number'
+                    onChange={ (e) => {
+                        setStatus(+e.currentTarget.value)}}/>
+            </p>
+            <p>
+                <input
+                    placeholder='Enter task priority'
+                    value={priority}
+                    type='number'
+                    onChange={ (e) => {
+                        setPriority(+e.currentTarget.value)}}/>
+            </p>
+            <p>
+                <input
+                    placeholder='Enter task start date'
+                    value={startDate}
+                    onChange={ (e) => {
+                        setStartDate(e.currentTarget.value)}}/>
+            </p>
+            <p>
+                <input
+                    placeholder='Enter task deadline'
+                    value={deadline}
+                    onChange={ (e) => {
+                        setDeadline(e.currentTarget.value)}}/>
             </p>
 
             <button onClick={onUpdateTaskButtonClick}>Update task</button>

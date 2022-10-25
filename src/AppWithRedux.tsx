@@ -1,7 +1,6 @@
-import React, {useCallback, useReducer, useState} from 'react';
+import React, {useCallback} from 'react';
 import './App.css';
-import {TaskType, TodoList} from "./TodoList";
-import {v1} from "uuid";
+import {TodoList} from "./TodoList";
 import {AddItemForm} from "./AddItemForm";
 import {AppBar, Button, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
 import {Menu} from "@mui/icons-material";
@@ -9,21 +8,15 @@ import {
     addTodolistAC,
     changeTodolistFilterAC,
     changeTodolistTitleAC,
-    removeTodolistAC,
-    todolistsReducer
+    removeTodolistAC, TodolistDomainType
 } from "./state/todolists-reducer";
-import {addTaskAC, removeTaskAC, tasksReducer, taskStatusChangerAC, taskTitleChangerAC} from "./state/tasks-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./state/store";
+import {TaskType} from "./api/todolists-api";
 
 export type  FilterValueType = 'All' | 'Active' | 'Completed'
 
 
-export type TodolistsType = {
-    id: string
-    title: string
-    filterValue: FilterValueType
-}
 export type TasksType = {
     [key: string]: Array<TaskType>
 }
@@ -34,7 +27,7 @@ function AppWithRedux() {
     const dispatch = useDispatch()
 
     //Доставание стейта, в типизации первым параметром указывается тип стейта, вторым того, что берется из него
-    const todolists = useSelector<AppRootStateType, Array<TodolistsType>>(state => state.todolists)
+    const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
     // const tasks = useSelector<AppRootStateType, TasksType>(state => state.tasks)
 
 

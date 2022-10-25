@@ -1,5 +1,4 @@
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useState} from 'react'
-import axios from "axios";
 import {todolistsAPI} from "../api/todolists-api";
 
 export default {

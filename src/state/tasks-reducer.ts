@@ -1,17 +1,63 @@
-import {FilterValueType, TasksObjType, TodolistsType} from "../App";
+import {TasksObjType} from "../App";
 import {v1} from "uuid";
-import {TaskType} from "../TodoList";
-import {AddTodolistActionType, RemoveTodolistActionType, todoListID1, todoListID2} from "./todolists-reducer";
+import {AddTodolistActionType, RemoveTodolistActionType} from "./todolists-reducer";
+import {TaskPriorities, TaskStatuses, TaskType} from "../api/todolists-api";
+
+
+let todoListID1 = v1()
+let todoListID2 = v1()
 
 const initialState:TasksObjType = {
     [todoListID1]: [
-        {id: v1(), title: 'CSS', isDone: true},
-        {id: v1(), title: 'JS', isDone: true},
-        {id: v1(), title: 'React', isDone: false}],
+        {
+            description: '',
+            title: 'CSS',
+            status: TaskStatuses.Completed,
+            priority: TaskPriorities.Hi,
+            startDate: '',
+            deadline: '',
+            id: v1(),
+            todoListId: todoListID1,
+            order: 0,
+            addedDate: '',
+        },
+        {
+            description: '',
+            title: 'React',
+            status: TaskStatuses.New,
+            priority: TaskPriorities.Middle,
+            startDate: '',
+            deadline: '',
+            id: v1(),
+            todoListId: todoListID1,
+            order: 0,
+            addedDate: '',
+        }],
     [todoListID2]: [
-        {id: v1(), title: 'Python', isDone: true},
-        {id: v1(), title: 'Django', isDone: true},
-        {id: v1(), title: 'PPL', isDone: false}]
+        {
+            description: '',
+            title: 'Python',
+            status: TaskStatuses.New,
+            priority: TaskPriorities.Low,
+            startDate: '',
+            deadline: '',
+            id: v1(),
+            todoListId: todoListID2,
+            order: 0,
+            addedDate: '',
+        },
+        {
+            description: '',
+            title: 'Go',
+            status: TaskStatuses.New,
+            priority: TaskPriorities.Later,
+            startDate: '',
+            deadline: '',
+            id: v1(),
+            todoListId: todoListID2,
+            order: 0,
+            addedDate: '',
+        }]
 }
 
 type ActionType = RemoveTaskACType
@@ -35,7 +81,7 @@ type TaskStatusChangerACType = {
     type: 'CHANGE-TASK-STATUS',
     todolistId: string,
     taskId: string,
-    taskStatus: boolean
+    taskStatus: TaskStatuses
 }
 
 type TaskTitleChangerACType = {
@@ -56,7 +102,7 @@ export const addTaskAC = (todolistId: string, newTaskTitle: string): AddTaskACTy
     todolistId: todolistId,
     newTaskTitle: newTaskTitle
 })
-export const taskStatusChangerAC = (todolistId: string, taskId: string, taskStatus: boolean): TaskStatusChangerACType => ({
+export const taskStatusChangerAC = (todolistId: string, taskId: string, taskStatus: TaskStatuses): TaskStatusChangerACType => ({
     type: 'CHANGE-TASK-STATUS',
     todolistId: todolistId,
     taskId: taskId,
@@ -79,7 +125,18 @@ export const tasksReducer = (state: TasksObjType = initialState, action: ActionT
                 [action.todolistId]: changedTodolist
             }
         case 'ADD-TASK':
-            const newTask: TaskType = {id: v1(), title: action.newTaskTitle, isDone: false}
+            const newTask: TaskType = {
+                description: '',
+                title: action.newTaskTitle,
+                status: TaskStatuses.New,
+                priority: TaskPriorities.Later,
+                startDate: '',
+                deadline: '',
+                id: v1(),
+                todoListId: action.todolistId,
+                order: 0,
+                addedDate: '',
+            }
             return {
                 ...state,
                 [action.todolistId]: [...state[action.todolistId], newTask]
@@ -91,7 +148,7 @@ export const tasksReducer = (state: TasksObjType = initialState, action: ActionT
                     return el.id === action.taskId ?
                         {
                             ...el,
-                            isDone: action.taskStatus
+                            status: action.taskStatus
                         } :
                         el
                 })

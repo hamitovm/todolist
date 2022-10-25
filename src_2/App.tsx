@@ -2,19 +2,21 @@ import React, {useState} from 'react';
 import './App.css';
 import {TodoList} from "./TodoList";
 import {v1} from "uuid";
+import {TodolistType} from "../src/api/todolists-api";
+import {TodolistDomainType} from "../src/state/todolists-reducer";
 
 export type  FilterValueType = 'All' | 'Active' | 'Completed'
 
-type TodolistsType = {
-    id: string
-    title: string
-    filterValue: FilterValueType
-}
+// type TodolistsType = {
+//     id: string
+//     title: string
+//     filterValue: FilterValueType
+// }
 
 function App() {
-    let [todolists, setTodolists] = useState<Array<TodolistsType>>([
-        {id: v1(), title: 'What to learn', filterValue: 'Active'},
-        {id: v1(), title: 'What to buy', filterValue: 'Completed'},
+    let [todolists, setTodolists] = useState<Array<TodolistDomainType>>([
+        {id: v1(), title: 'What to learn', filterValue: 'All', addedDate:'', order: 0},
+        {id: v1(), title: 'What to buy', filterValue: 'All', addedDate:'', order: 0},
     ])
 
     type TaskType = {

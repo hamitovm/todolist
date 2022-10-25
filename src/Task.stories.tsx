@@ -1,8 +1,8 @@
 import {ComponentMeta, ComponentStory} from "@storybook/react";
-import {AddItemForm} from "./AddItemForm";
 import React, {useState} from "react";
 import {action} from "@storybook/addon-actions";
 import {TaskComponent} from "./Task";
+import {TaskStatuses} from "./api/todolists-api";
 
 
 export default {
@@ -13,11 +13,11 @@ export default {
 } as ComponentMeta<typeof TaskComponent>;
 
 const Template: ComponentStory<typeof TaskComponent> = (args) => {
-    let [isDoneValue, setIsDoneValue] = useState<boolean>(false)
+    let [statusValue, setStatusValue] = useState<TaskStatuses>(TaskStatuses.New)
     let [taskTitle, setTaskTitle] = useState<string>('task title')
     return <TaskComponent {...args}     title={taskTitle}
-    isDone={isDoneValue}
-    onChangeTaskCheckboxHandler={(taskId, isDone) =>setIsDoneValue(!isDone)}
+    status={statusValue}
+    onChangeTaskCheckboxHandler={(taskId, isDone) =>setStatusValue(statusValue === TaskStatuses.New ? TaskStatuses.Completed : TaskStatuses.New)}
         onTaskTitleChangeHandler={(taskId: string, newTitle: string) => setTaskTitle(newTitle)}/>;
 }
 
@@ -45,7 +45,7 @@ export const TaskIsDone = TemplateBasic.bind({});
 TaskIsDone.args = {
     taskId: '111',
     title: 'CSS',
-    isDone: true,
+    status: TaskStatuses.Completed,
     deleteTask: deleteCallback,
     onChangeTaskCheckboxHandler: taskIsDoneCallback,
     onTaskTitleChangeHandler: changeTaskTitlecallback
@@ -55,7 +55,7 @@ export const TaskIsNotDone = TemplateBasic.bind({});
 TaskIsNotDone.args = {
     taskId: '111',
     title: 'Vue',
-    isDone: false,
+    status: TaskStatuses.New,
     deleteTask: deleteCallback,
     onChangeTaskCheckboxHandler: taskIsDoneCallback,
     onTaskTitleChangeHandler: changeTaskTitlecallback

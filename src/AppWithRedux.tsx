@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import './App.css';
 import {TodoList} from "./TodoList";
 import {AddItemForm} from "./AddItemForm";
@@ -7,12 +7,12 @@ import {Menu} from "@mui/icons-material";
 import {
     addTodolistAC,
     changeTodolistFilterAC,
-    changeTodolistTitleAC,
-    removeTodolistAC, TodolistDomainType
+    changeTodolistTitleAC, fetchTodolistsThunk,
+    removeTodolistAC, setTodolistsAC, TodolistDomainType
 } from "./state/todolists-reducer";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootStateType} from "./state/store";
-import {TaskType} from "./api/todolists-api";
+import {TaskType, todolistsAPI} from "./api/todolists-api";
 
 export type  FilterValueType = 'All' | 'Active' | 'Completed'
 
@@ -22,7 +22,6 @@ export type TasksType = {
 }
 
 function AppWithRedux() {
-    console.log('AppWithRedux called')
     //Общий диспатч редакса
     const dispatch = useDispatch()
 
@@ -30,6 +29,9 @@ function AppWithRedux() {
     const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
     // const tasks = useSelector<AppRootStateType, TasksType>(state => state.tasks)
 
+    useEffect(()=> {
+        fetchTodolistsThunk(dispatch)
+    }, [])
 
 
     //Task remover ========================================================================

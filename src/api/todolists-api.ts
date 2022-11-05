@@ -1,5 +1,4 @@
 import axios from "axios";
-import {DeleteTodolist, UpdateTodolistTitle} from "../stories/todolists-api.stories";
 
 const instance = axios.create({
     //Как указано в спецификации www.w3.org/TR/cors/#omit-credentials-flag,

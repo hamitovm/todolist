@@ -1,64 +1,9 @@
 import {TasksObjType} from "../App";
 import {v1} from "uuid";
-import {AddTodolistActionType, RemoveTodolistActionType} from "./todolists-reducer";
+import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType} from "./todolists-reducer";
 import {TaskPriorities, TaskStatuses, TaskType} from "../api/todolists-api";
 
-
-let todoListID1 = v1()
-let todoListID2 = v1()
-
-const initialState:TasksObjType = {
-    [todoListID1]: [
-        {
-            description: '',
-            title: 'CSS',
-            status: TaskStatuses.Completed,
-            priority: TaskPriorities.Hi,
-            startDate: '',
-            deadline: '',
-            id: v1(),
-            todoListId: todoListID1,
-            order: 0,
-            addedDate: '',
-        },
-        {
-            description: '',
-            title: 'React',
-            status: TaskStatuses.New,
-            priority: TaskPriorities.Middle,
-            startDate: '',
-            deadline: '',
-            id: v1(),
-            todoListId: todoListID1,
-            order: 0,
-            addedDate: '',
-        }],
-    [todoListID2]: [
-        {
-            description: '',
-            title: 'Python',
-            status: TaskStatuses.New,
-            priority: TaskPriorities.Low,
-            startDate: '',
-            deadline: '',
-            id: v1(),
-            todoListId: todoListID2,
-            order: 0,
-            addedDate: '',
-        },
-        {
-            description: '',
-            title: 'Go',
-            status: TaskStatuses.New,
-            priority: TaskPriorities.Later,
-            startDate: '',
-            deadline: '',
-            id: v1(),
-            todoListId: todoListID2,
-            order: 0,
-            addedDate: '',
-        }]
-}
+const initialState:TasksObjType = {}
 
 type ActionType = RemoveTaskACType
     | AddTaskACType
@@ -66,6 +11,7 @@ type ActionType = RemoveTaskACType
     | TaskTitleChangerACType
     | AddTodolistActionType
     | RemoveTodolistActionType
+    | SetTodolistsActionType
 
 type RemoveTaskACType = {
     type: 'REMOVE-TASK',
@@ -166,16 +112,22 @@ export const tasksReducer = (state: TasksObjType = initialState, action: ActionT
                 })
             }
         case 'ADD-TODOLIST':
-
-            const stateToReturn =  {
+            return {
                 ...state,
                 [action.todolistId]: []
             }
-            return stateToReturn
-        case 'REMOVE-TODOLIST':
+        case 'REMOVE-TODOLIST': {
             const stateCopy = {...state}
             delete stateCopy[action.id]
             return stateCopy
+        }
+        case "SET-TODOLISTS": {
+            const stateCopy = {...state}
+            action.todolists.forEach(el => {
+                stateCopy[el.id] = []
+            })
+            return stateCopy
+        }
         default:
             return state
     }

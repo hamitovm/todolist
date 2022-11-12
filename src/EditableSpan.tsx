@@ -1,6 +1,5 @@
 import React, {ChangeEvent, KeyboardEvent, useCallback, useState} from "react";
 import {TextField} from "@mui/material";
-import AppWithRedux from "./AppWithRedux";
 
 type EditableSpanPropsType = {
     title: string
@@ -9,7 +8,6 @@ type EditableSpanPropsType = {
 
 
 export const EditableSpan = React.memo((props: EditableSpanPropsType) => {
-    console.log('EditableSpan called')
     let [editMode, setEditMode] = useState<boolean>(false)
     let [inputValue, setInputValue] = useState('')
     //Error setter ========================================================================

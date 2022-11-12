@@ -72,7 +72,7 @@ type GetTasksResponseType = {
     error: string | null
 }
 
-type UpdateTaskModelType = {
+export type UpdateTaskModelType = {
     title: string
     description: string
     status:number
@@ -83,22 +83,18 @@ type UpdateTaskModelType = {
 
 export const todolistsAPI = {
     getTodolists() {
-        const promise = instance.get<Array<TodolistType>>('todo-lists')
-        return promise
+        return instance.get<Array<TodolistType>>('todo-lists')
     },
     createTodolist(title: string) {
-        const promise = instance.post<ResponseType<{ item: TodolistType }>>('todo-lists', {
+        return instance.post<ResponseType<{ item: TodolistType }>>('todo-lists', {
             title: title
         })
-        return promise
     },
     deleteTodolist(id: string) {
-        const promise = instance.delete<ResponseType>(`todo-lists/${id}`)
-        return promise
+        return instance.delete<ResponseType>(`todo-lists/${id}`)
     },
     updateTodolistTitle(id: string, title: string) {
-        const promise = instance.put<ResponseType>(`todo-lists/${id}`, {title: title})
-        return promise
+        return instance.put<ResponseType>(`todo-lists/${id}`, {title: title})
     },
     getTasks(todolistId: string) {
         return instance.get<GetTasksResponseType>(`todo-lists/${todolistId}/tasks`)
@@ -114,3 +110,5 @@ export const todolistsAPI = {
         return instance.put<ResponseType>(`todo-lists/${todolistId}/tasks/${taskId}`, updateTaskData)
     },
 }
+
+

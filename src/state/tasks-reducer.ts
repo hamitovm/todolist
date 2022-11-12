@@ -1,17 +1,21 @@
 import {TasksObjType} from "../App";
-import {v1} from "uuid";
-import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType} from "./todolists-reducer";
-import {TaskPriorities, TaskStatuses, TaskType} from "../api/todolists-api";
+import {
+    AddTodolistActionType,
+    RemoveTodolistActionType,
+    SetTodolistsActionType
+} from "./todolists-reducer";
+import {TaskType, todolistsAPI, UpdateTaskModelType} from "../api/todolists-api";
+import {AppThunk, RootState} from "./store";
 
-const initialState:TasksObjType = {}
+const initialState: TasksObjType = {}
 
-type ActionType = RemoveTaskACType
+export type TasksActionType = RemoveTaskACType
     | AddTaskACType
-    | TaskStatusChangerACType
-    | TaskTitleChangerACType
+    | UpdateTaskACType
     | AddTodolistActionType
     | RemoveTodolistActionType
     | SetTodolistsActionType
+    | SetTasksACType
 
 type RemoveTaskACType = {
     type: 'REMOVE-TASK',
@@ -20,14 +24,13 @@ type RemoveTaskACType = {
 }
 type AddTaskACType = {
     type: 'ADD-TASK',
-    todolistId: string,
-    newTaskTitle: string
+    newTask: TaskType
 }
-type TaskStatusChangerACType = {
-    type: 'CHANGE-TASK-STATUS',
+type UpdateTaskACType = {
+    type: 'UPDATE-TASK',
     todolistId: string,
     taskId: string,
-    taskStatus: TaskStatuses
+    model: UpdateDomainTaskModelType
 }
 
 type TaskTitleChangerACType = {
@@ -36,6 +39,11 @@ type TaskTitleChangerACType = {
     taskId: string,
     newTitle: string
 }
+type SetTasksACType = {
+    type: 'SET-TASKS',
+    tasks: Array<TaskType>,
+    todolistId: string
+}
 
 //Action creators==========================================
 export const removeTaskAC = (todolistId: string, taskId: string): RemoveTaskACType => ({
@@ -43,26 +51,25 @@ export const removeTaskAC = (todolistId: string, taskId: string): RemoveTaskACTy
     todolistId: todolistId,
     taskId: taskId
 })
-export const addTaskAC = (todolistId: string, newTaskTitle: string): AddTaskACType => ({
+export const addTaskAC = (newTask: TaskType): AddTaskACType => ({
     type: 'ADD-TASK',
-    todolistId: todolistId,
-    newTaskTitle: newTaskTitle
+    newTask
+
 })
-export const taskStatusChangerAC = (todolistId: string, taskId: string, taskStatus: TaskStatuses): TaskStatusChangerACType => ({
-    type: 'CHANGE-TASK-STATUS',
+export const updateTaskAC = (todolistId: string, taskId: string, model: UpdateDomainTaskModelType): UpdateTaskACType => ({
+    type: 'UPDATE-TASK',
     todolistId: todolistId,
     taskId: taskId,
-    taskStatus: taskStatus
+    model
 })
 
-export const taskTitleChangerAC = (todolistId: string, taskId: string, newTitle: string): TaskTitleChangerACType => ({
-    type: 'CHANGE-TASK-TITLE',
-    todolistId: todolistId,
-    taskId: taskId,
-    newTitle: newTitle
+export const setTasksAC = (tasks: Array<TaskType>, todolistId: string): SetTasksACType => ({
+    type: 'SET-TASKS',
+    tasks,
+    todolistId
 })
 
-export const tasksReducer = (state: TasksObjType = initialState, action: ActionType): TasksObjType => {
+export const tasksReducer = (state: TasksObjType = initialState, action: TasksActionType): TasksObjType => {
     switch (action.type) {
         case 'REMOVE-TASK':
             const changedTodolist = [...state[action.todolistId].filter(el => el.id !== action.taskId)]
@@ -71,42 +78,19 @@ export const tasksReducer = (state: TasksObjType = initialState, action: ActionT
                 [action.todolistId]: changedTodolist
             }
         case 'ADD-TASK':
-            const newTask: TaskType = {
-                description: '',
-                title: action.newTaskTitle,
-                status: TaskStatuses.New,
-                priority: TaskPriorities.Later,
-                startDate: '',
-                deadline: '',
-                id: v1(),
-                todoListId: action.todolistId,
-                order: 0,
-                addedDate: '',
-            }
+            const newTask: TaskType = action.newTask
             return {
                 ...state,
-                [action.todolistId]: [...state[action.todolistId], newTask]
+                [action.newTask.todoListId]: [newTask, ...state[action.newTask.todoListId]]
             }
-        case 'CHANGE-TASK-STATUS':
+        case 'UPDATE-TASK':
             return {
                 ...state,
                 [action.todolistId]: state[action.todolistId].map(el => {
                     return el.id === action.taskId ?
                         {
                             ...el,
-                            status: action.taskStatus
-                        } :
-                        el
-                })
-            }
-        case 'CHANGE-TASK-TITLE':
-            return {
-                ...state,
-                [action.todolistId]: state[action.todolistId].map(el => {
-                    return el.id === action.taskId ?
-                        {
-                            ...el,
-                            title: action.newTitle
+                            ...action.model
                         } :
                         el
                 })
@@ -114,7 +98,7 @@ export const tasksReducer = (state: TasksObjType = initialState, action: ActionT
         case 'ADD-TODOLIST':
             return {
                 ...state,
-                [action.todolistId]: []
+                [action.todolist.id]: []
             }
         case 'REMOVE-TODOLIST': {
             const stateCopy = {...state}
@@ -128,7 +112,80 @@ export const tasksReducer = (state: TasksObjType = initialState, action: ActionT
             })
             return stateCopy
         }
+        case "SET-TASKS": {
+            let stateCopy = {...state}
+            action.tasks.forEach(el => {
+                stateCopy[action.todolistId] = [...action.tasks]
+            })
+            return {...stateCopy}
+        }
         default:
             return state
+    }
+}
+
+
+export const fetchTasksTC = (todolistId: string): AppThunk => {
+    return (dispatch) => {
+        todolistsAPI.getTasks(todolistId)
+            .then(response => {
+                dispatch(setTasksAC(response.data.items, todolistId))
+            })
+    }
+}
+
+export const removeTaskTC = (todolistId: string, taskId: string): AppThunk => {
+    return (dispatch) => {
+        todolistsAPI.deleteTask(todolistId, taskId)
+            .then(res => {
+                dispatch(removeTaskAC(todolistId, taskId))
+            })
+    }
+}
+
+export const addTaskTC = (todolistId: string, title: string): AppThunk => {
+    return (dispatch) => {
+        todolistsAPI.createTask(todolistId, title)
+            .then(res => {
+                dispatch(addTaskAC(res.data.data.item))
+            })
+    }
+}
+// UpdateDomainTaskModelType - создан для того, что при изменении
+// только одного из параметров таски, в Санк Криейтор можно было передать только его
+export type UpdateDomainTaskModelType = {
+    title?: string
+    description?: string
+    status?:number
+    priority?: number
+    startDate?: string
+    deadline?: string
+}
+
+export const updateTaskTC = (todolistId: string,
+                             taskId: string,
+                             domainModel: UpdateDomainTaskModelType): AppThunk => {
+    return (dispatch,
+            getState: () => RootState) => {
+        const state = getState()
+        const taskToUpdate = state.tasks[todolistId].find(el => el.id === taskId)
+        if (!taskToUpdate) {
+            // throw new Error('task not found in the state')
+            console.warn('task not found in the state')
+            return
+        }
+        const model : UpdateTaskModelType = {
+            title: taskToUpdate.title,
+            description: taskToUpdate.description,
+            status: taskToUpdate.status,
+            priority: taskToUpdate.priority,
+            startDate: taskToUpdate.startDate,
+            deadline: taskToUpdate.deadline,
+            ...domainModel
+        }
+        todolistsAPI.updateTask(todolistId, taskId, model)
+            .then(res => {
+                dispatch(updateTaskAC(todolistId, taskId, model))
+            })
     }
 }

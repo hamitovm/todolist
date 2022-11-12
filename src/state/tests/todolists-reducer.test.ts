@@ -4,7 +4,7 @@ import {
     changeTodolistTitleAC, FilterValueType,
     removeTodolistAC, setTodolistsAC, TodolistDomainType,
     todolistsReducer
-} from './todolists-reducer'
+} from '../todolists-reducer'
 import { v1 } from 'uuid'
 
 let todolistId1: string
@@ -48,7 +48,7 @@ test('correct todolist should be added', () => {
         {id: todolistId2, title: 'What to buy', filterValue: 'All', addedDate:'', order: 0}
     ]
 
-    const endState = todolistsReducer(startState, addTodolistAC(newTodolistTitle))
+    const endState = todolistsReducer(startState, addTodolistAC({id: 'todolistId3', title: newTodolistTitle, filterValue: 'All', addedDate:'', order: 0}))
 
     expect(endState.length).toBe(3)
     expect(endState[0].title).toBe(newTodolistTitle)

@@ -3,12 +3,12 @@ export type StateType = {
     childrenCount: number
     name: string
 }
-type ActionType = {
+export type UserActionType = {
     type: string
     [key: string]: any
 }
 
-export const userReducer = (state: StateType, action: ActionType):StateType => {
+export const userReducer = (state: StateType, action: UserActionType):StateType => {
     switch (action.type) {
         case 'INCREMENT-AGE':
             return {...state,

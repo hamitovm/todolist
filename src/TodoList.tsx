@@ -1,19 +1,20 @@
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect} from "react";
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
 import {Button, IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {AppRootStateType} from "./state/store";
-import {addTaskAC, removeTaskAC, taskStatusChangerAC, taskTitleChangerAC} from "./state/tasks-reducer";
 import {
-    changeTodolistFilterAC,
-    changeTodolistTitleAC,
-    FilterValueType,
-    removeTodolistAC
+    addTaskTC, updateTaskTC, fetchTasksTC, removeTaskTC,
+} from "./state/tasks-reducer";
+import {
+    changeTodolistFilterAC, removeTodolistsTC,
+    FilterValueType, updateTodolistTitleTC
 } from "./state/todolists-reducer";
 import {TaskComponent} from "./Task";
 import {TaskStatuses, TaskType} from "./api/todolists-api";
+import {useAppDispatch} from "./state/hooks";
 
 // export type TaskType = {
 //     id: string,
@@ -37,9 +38,11 @@ type PropsType = {
 
 
 export const TodoList = React.memo((props: PropsType) => {
-    console.log('TodoList called')
     //Общий диспатч редакса
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
+    useEffect(()=> {
+        dispatch(fetchTasksTC(props.todolistId))
+    }, [dispatch, props.todolistId])
 
     //Доставание стейта, в типизации первым параметром указывается тип стейта, вторым того, что берется из него
     let tasks = useSelector<AppRootStateType, Array<TaskType>>(state => state.tasks[props.todolistId])
@@ -52,45 +55,43 @@ export const TodoList = React.memo((props: PropsType) => {
 
     //Task adder ========================================================================
     const taskAdder = useCallback((inputValue: string) => {
-        dispatch(addTaskAC(props.todolistId, inputValue))
+        dispatch(addTaskTC(props.todolistId, inputValue))
     }, [dispatch, props.todolistId])
 
+    // Установка фильтров тудулиста
     const onAllClickButtonHandler = useCallback(() => {
-        // props.setFilterValue(props.todolistId, 'All')
         dispatch(changeTodolistFilterAC(props.todolistId, 'All'))
     }, [dispatch, props.todolistId])
+
     const onActiveClickButtonHandler = useCallback(() => {
-        // props.setFilterValue(props.todolistId, 'Active')
         dispatch(changeTodolistFilterAC(props.todolistId, 'Active'))
-
     }, [dispatch, props.todolistId])
+
     const onCompletedClickButtonHandler = useCallback(() => {
-        // props.setFilterValue(props.todolistId, 'Completed')
         dispatch(changeTodolistFilterAC(props.todolistId, 'Completed'))
-
     }, [dispatch, props.todolistId])
+
+    //Удаление тудулиста
     const onTodolistDeleteClickHandler = useCallback(() => {
-        // props.removeTodolist(props.todolistId)
-        dispatch(removeTodolistAC(props.todolistId))
-
+        dispatch(removeTodolistsTC(props.todolistId))
     }, [dispatch, props.todolistId])
 
-    // const taskAdder = (inpitValue: string) => {
-    //     props.taskAdder(inpitValue, props.todolistId)
-    // }
     const onTodolistTitleChangeHandler = useCallback((newTitle: string) => {
-        // props.todolistTitleChanger(newTitle, props.todolistId)
-        dispatch(changeTodolistTitleAC(props.todolistId, newTitle))
+        dispatch(updateTodolistTitleTC(props.todolistId, newTitle))
+    }, [dispatch, props.todolistId])
 
-    }, [dispatch, props.todolistId])
     const deleteTaskButtonHandler = useCallback((taskId: string) => {
-        dispatch(removeTaskAC(props.todolistId, taskId))
+        dispatch(removeTaskTC(props.todolistId, taskId))
+        // dispatch(removeTaskAC(props.todolistId, taskId))
     }, [dispatch, props.todolistId])
+
+
     const onChangeTaskCheckboxHandler = useCallback((taskId: string, status: TaskStatuses) => {
-        dispatch(taskStatusChangerAC(props.todolistId, taskId, status))
+        dispatch(updateTaskTC(props.todolistId, taskId, {status}))
     }, [dispatch, props.todolistId])
+
     const onTaskTitleChangeHandler = useCallback((taskId: string, newTitle: string) => {
-        dispatch(taskTitleChangerAC(props.todolistId, taskId, newTitle))
+        dispatch(updateTaskTC(props.todolistId, taskId, {title: newTitle}))
     }, [dispatch, props.todolistId])
 
 

@@ -12,7 +12,7 @@ import {
     removeTodolistAC,
     todolistsReducer
 } from "./state/todolists-reducer";
-import {addTaskAC, removeTaskAC, tasksReducer, taskStatusChangerAC, taskTitleChangerAC} from "./state/tasks-reducer";
+import {addTaskAC, removeTaskAC, tasksReducer} from "./state/tasks-reducer";
 import {TaskPriorities, TaskStatuses, TaskType} from "./api/todolists-api";
 
 export type  FilterValueType = 'All' | 'Active' | 'Completed'
@@ -90,18 +90,18 @@ function AppWithReducers() {
         dispatchToTasksReducer(removeTaskAC(todoListID, id))
     }
     //Task adder ========================================================================
-    const taskAdder = (inputValue: string, todoListID: string) => {
-        dispatchToTasksReducer(addTaskAC(todoListID,inputValue))
-    }
+    // const taskAdder = (inputValue: string, todoListID: string) => {
+    //     dispatchToTasksReducer(addTaskAC(todoListID,inputValue))
+    // }
 
     //Task status changer ====================================================================
-    const taskStatusChanger = (taskId: string, status: TaskStatuses, todoListID: string) => {
-        dispatchToTasksReducer(taskStatusChangerAC(todoListID, taskId, status))
-    }
+    // const taskStatusChanger = (taskId: string, status: TaskStatuses, todoListID: string) => {
+    //     dispatchToTasksReducer(taskStatusChangerAC(todoListID, taskId, status))
+    // }
     //Task title changer ====================================================================
-    const taskTitleChanger = (taskId: string, newTitle: string, todoListID: string) => {
-        dispatchToTasksReducer(taskTitleChangerAC(todoListID, taskId, newTitle))
-    }
+    // const taskTitleChanger = (taskId: string, newTitle: string, todoListID: string) => {
+    //     dispatchToTasksReducer(taskTitleChangerAC(todoListID, taskId, newTitle))
+    // }
 
 
 
@@ -119,11 +119,11 @@ function AppWithReducers() {
         dispatchToTodolistsReducer(removeTodolistAC(todolistId))
     }
     //FOR NEW TODOLIST==============================================================
-    const todolistAdder = (todolistInputValue: string) => {
-        const action = addTodolistAC(todolistInputValue)
-        dispatchToTasksReducer(action)
-        dispatchToTodolistsReducer(action)
-    }
+    // const todolistAdder = (todolistInputValue: string) => {
+    //     const action = addTodolistAC(todolistInputValue)
+    //     dispatchToTasksReducer(action)
+    //     dispatchToTodolistsReducer(action)
+    // }
 
     return (
         <div>
@@ -144,7 +144,7 @@ function AppWithReducers() {
                     <Grid container  style={ {padding: '20px'}}>
                         <div className="todolist_page_header">
                             <h1>Add new TodoList</h1>
-                            <AddItemForm itemAdder={todolistAdder}/>
+                            {/*<AddItemForm itemAdder={todolistAdder}/>*/}
                         </div>
                     </Grid>
                     <Grid container spacing={3}>

@@ -1,7 +1,7 @@
 import React, {ChangeEvent, useCallback} from "react";
 import {IconButton} from "@mui/material";
 import {Delete} from "@mui/icons-material";
-import {EditableSpan} from "./EditableSpan";
+import {EditableSpan} from "./components/EditableSpan/EditableSpan";
 import {TaskStatuses} from "./api/todolists-api";
 
 export type TaskComponentPropsType = {

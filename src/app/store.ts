@@ -1,8 +1,8 @@
 import {applyMiddleware, combineReducers, legacy_createStore as createStore} from "redux";
-import {TodolistsActionType, todolistsReducer} from "./todolists-reducer";
-import {TasksActionType, tasksReducer} from "./tasks-reducer";
+import {TodolistsActionType, todolistsReducer} from "../state/todolists-reducer";
+import {TasksActionType, tasksReducer} from "../state/tasks-reducer";
 import thunkMiddleware, {ThunkAction, ThunkDispatch} from "redux-thunk";
-import {UserActionType} from "./user-reducer";
+import {UserActionType} from "../state/user-reducer";
 
 //Комбинируются разные редюсеры в один, в качестве свойства - ветка стейта, для которой редюсер предназначен
 export const rootReducer = combineReducers({

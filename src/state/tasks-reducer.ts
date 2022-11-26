@@ -1,11 +1,11 @@
-import {TasksObjType} from "../App";
 import {
     AddTodolistActionType,
     RemoveTodolistActionType,
     SetTodolistsActionType
 } from "./todolists-reducer";
 import {TaskType, todolistsAPI, UpdateTaskModelType} from "../api/todolists-api";
-import {AppThunk, RootState} from "./store";
+import {AppThunk, RootState} from "../app/store";
+import {TasksObjType} from "../app/AppWithRedux";
 
 const initialState: TasksObjType = {}
 

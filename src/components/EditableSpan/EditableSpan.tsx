@@ -47,6 +47,8 @@ export const EditableSpan = React.memo((props: EditableSpanPropsType) => {
                                      // className={error ? 'error' : ''}
                                          helperText={error}
                                          label={'Type value'}
+
+
         />
     }
     return (

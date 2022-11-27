@@ -8,7 +8,7 @@ import {
 } from "../tasks-reducer";
 import {addTodolistAC, removeTodolistAC, setTodolistsAC} from "../todolists-reducer";
 import {TaskPriorities, TaskStatuses, TaskType} from "../../api/todolists-api";
-import {TasksObjType} from "../../app/AppWithRedux";
+import {TasksObjType} from "../../app/App";
 
 let todolistId1: string
 let todolistId2: string
@@ -147,7 +147,7 @@ test('correct task should change name', () => {
 })
 
 test('new array should be added when new todolist added', () => {
-    const action = addTodolistAC({id: 'todolistId3', title: 'What to learn', filterValue: 'All', addedDate:'', order: 0})
+    const action = addTodolistAC({id: 'todolistId3', title: 'What to learn', filterValue: 'All', addedDate:'', order: 0, entityStatus: "idle"})
     const endState = tasksReducer(startState, action)
 
     const keys = Object.keys(endState)

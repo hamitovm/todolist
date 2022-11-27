@@ -1,11 +1,9 @@
-import {
-    AddTodolistActionType,
-    RemoveTodolistActionType,
-    SetTodolistsActionType
-} from "./todolists-reducer";
+import {AddTodolistActionType, RemoveTodolistActionType, SetTodolistsActionType} from "./todolists-reducer";
 import {TaskType, todolistsAPI, UpdateTaskModelType} from "../api/todolists-api";
 import {AppThunk, RootState} from "../app/store";
-import {TasksObjType} from "../app/AppWithRedux";
+import {TasksObjType} from "../app/App";
+import {setAppStatusAC} from "../app/app-reducer";
+import {handleServerAppError, handleServerNetworkError} from "../utils/error-utils";
 
 const initialState: TasksObjType = {}
 
@@ -127,27 +125,51 @@ export const tasksReducer = (state: TasksObjType = initialState, action: TasksAc
 
 export const fetchTasksTC = (todolistId: string): AppThunk => {
     return (dispatch) => {
+        dispatch(setAppStatusAC("loading"))
         todolistsAPI.getTasks(todolistId)
             .then(response => {
                 dispatch(setTasksAC(response.data.items, todolistId))
+                dispatch(setAppStatusAC("succeeded"))
+            })
+            .catch(error => {
+                handleServerNetworkError(error, dispatch)
             })
     }
 }
 
 export const removeTaskTC = (todolistId: string, taskId: string): AppThunk => {
     return (dispatch) => {
+        dispatch(setAppStatusAC("loading"))
         todolistsAPI.deleteTask(todolistId, taskId)
             .then(res => {
-                dispatch(removeTaskAC(todolistId, taskId))
+                if (res.data.resultCode === 0) {
+                    dispatch(removeTaskAC(todolistId, taskId))
+                    dispatch(setAppStatusAC("succeeded"))
+                } else {
+                    handleServerAppError(res.data, dispatch)
+                }
+            })
+            .catch(error => {
+                handleServerNetworkError(error, dispatch)
             })
     }
 }
 
 export const addTaskTC = (todolistId: string, title: string): AppThunk => {
     return (dispatch) => {
+        dispatch(setAppStatusAC("loading"))
         todolistsAPI.createTask(todolistId, title)
             .then(res => {
-                dispatch(addTaskAC(res.data.data.item))
+                if (res.data.resultCode === 0) {
+                    dispatch(addTaskAC(res.data.data.item))
+                    dispatch(setAppStatusAC("succeeded"))
+                } else {
+                    handleServerAppError(res.data, dispatch)
+                }
+
+            })
+            .catch(error => {
+                handleServerNetworkError(error, dispatch)
             })
     }
 }
@@ -156,7 +178,7 @@ export const addTaskTC = (todolistId: string, title: string): AppThunk => {
 export type UpdateDomainTaskModelType = {
     title?: string
     description?: string
-    status?:number
+    status?: number
     priority?: number
     startDate?: string
     deadline?: string
@@ -174,7 +196,7 @@ export const updateTaskTC = (todolistId: string,
             console.warn('task not found in the state')
             return
         }
-        const model : UpdateTaskModelType = {
+        const model: UpdateTaskModelType = {
             title: taskToUpdate.title,
             description: taskToUpdate.description,
             status: taskToUpdate.status,
@@ -183,9 +205,19 @@ export const updateTaskTC = (todolistId: string,
             deadline: taskToUpdate.deadline,
             ...domainModel
         }
+        dispatch(setAppStatusAC("loading"))
         todolistsAPI.updateTask(todolistId, taskId, model)
             .then(res => {
-                dispatch(updateTaskAC(todolistId, taskId, model))
+                if (res.data.resultCode === 0) {
+                    dispatch(updateTaskAC(todolistId, taskId, model))
+                    dispatch(setAppStatusAC("succeeded"))
+
+                } else {
+                    handleServerAppError(res.data, dispatch)
+                }
+            })
+            .catch(error => {
+                handleServerNetworkError(error, dispatch)
             })
     }
 }

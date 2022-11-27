@@ -1,22 +1,25 @@
 import {Provider} from "react-redux";
-import {AppRootStateType, store} from "../app/store";
-import {combineReducers, createStore} from "redux";
+import {AppRootStateType} from "../app/store";
+import {applyMiddleware, combineReducers, createStore} from "redux";
 import {tasksReducer} from "../state/tasks-reducer";
 import {todolistsReducer} from "../state/todolists-reducer";
 import {v1} from "uuid";
 import {TaskPriorities, TaskStatuses} from "../api/todolists-api";
+import thunkMiddleware from "redux-thunk";
+import {appReducer} from "../app/app-reducer";
 
 
 
 const rootReducer = combineReducers({
     tasks: tasksReducer,
-    todolists: todolistsReducer
+    todolists: todolistsReducer,
+    app: appReducer
 })
 
 const initialGlobalState = {
     todolists: [
-        {id: 'todolistId1', title: 'What to learn', filterValue: 'All', addedDate:'', order: 0},
-        {id: 'todolistId2', title: 'What to buy', filterValue: 'All', addedDate:'', order: 0}
+        {id: 'todolistId1', title: 'What to learn', filterValue: 'All', addedDate:'', order: 0, entityStatus: "idle"},
+        {id: 'todolistId2', title: 'What to buy', filterValue: 'All', addedDate:'', order: 0, entityStatus: "loading"}
     ],
     tasks: {
         ['todolistId1']: [
@@ -55,11 +58,15 @@ const initialGlobalState = {
                 order: 0,
                 addedDate: ''}
         ]
+    },
+    app: {
+        status: 'idle',
+        error: null
     }
 }
 
 // Стор для storybook истории
-export const storyBookStore = createStore(rootReducer, initialGlobalState as AppRootStateType)
+export const storyBookStore = createStore(rootReducer, initialGlobalState as AppRootStateType, applyMiddleware(thunkMiddleware))
 
 
 //Декоратор — это способ обернуть историю дополнительными функциями «рендеринга».

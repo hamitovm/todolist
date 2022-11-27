@@ -27,3 +27,15 @@ export const BaseExample = Template.bind({});
 BaseExample.args = {
     itemAdder: callback
 }
+
+export const DisabledExample = Template.bind({});
+// More on args: https://storybook.js.org/docs/react/writing-stories/args
+DisabledExample.args = {
+    itemAdder: callback,
+    disabled: true
+}
+
+// export const AddItemFormDisabledExample = (props: any) => {
+//     return <AddItemForm disabled={true} itemAdder={(title) => {}}/>
+// }
+

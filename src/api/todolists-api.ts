@@ -31,7 +31,7 @@ export type TodolistType = {
 
 //Общий дженерик тип - вместо D можно вставить уточнение, которое будет сидеть в data: D,
 // D = {} - если вместо D ничего не вставлено, то по умолчанию будет устанавливаться пустой объект {}
-type ResponseType<D = {}> = {
+export type ResponseType<D = {}> = {
     resultCode: number
     messages: Array<string>,
     data: D

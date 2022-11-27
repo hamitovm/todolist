@@ -3,11 +3,13 @@ import {TodolistsActionType, todolistsReducer} from "../state/todolists-reducer"
 import {TasksActionType, tasksReducer} from "../state/tasks-reducer";
 import thunkMiddleware, {ThunkAction, ThunkDispatch} from "redux-thunk";
 import {UserActionType} from "../state/user-reducer";
+import {appReducer} from "./app-reducer";
 
 //Комбинируются разные редюсеры в один, в качестве свойства - ветка стейта, для которой редюсер предназначен
 export const rootReducer = combineReducers({
     todolists: todolistsReducer,
-    tasks: tasksReducer
+    tasks: tasksReducer,
+    app: appReducer
 })
 //автоматическая типизация стейта через ReturnType<typeof --->
 export type AppRootStateType = ReturnType<typeof rootReducer>

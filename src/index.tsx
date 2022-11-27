@@ -2,13 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import AppWithRedux from "./app/AppWithRedux";
 import {Provider} from "react-redux";
 import {store} from "./app/store";
+import App from "./app/App";
 
 ReactDOM.render(
     <Provider store={store}>
-        <AppWithRedux/>
+        <App/>
     </Provider>,
     document.getElementById('root'))
 
@@ -21,7 +21,7 @@ ReactDOM.render(
 // );
 // const root = ReactDOM.createRoot(document.getElementById("root") as HTMLDivElement);
 // try {
-//     root.render(<AppWithRedux/>);
+//     root.render(<App/>);
 // } catch (error) {
 //     console.error(error);
 // }

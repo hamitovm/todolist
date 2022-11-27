@@ -1,13 +1,14 @@
 // AddItemFormPropsType ==============================================
 import React, {ChangeEvent, KeyboardEvent, useState} from "react";
-import {Button, IconButton, TextField} from "@mui/material";
-import {Add, AddCircleOutline, ControlPoint} from "@mui/icons-material";
+import {IconButton, TextField} from "@mui/material";
+import {AddCircleOutline} from "@mui/icons-material";
 
 type AddItemFormPropsType = {
     itemAdder: (inputValue: string) => void
+    disabled?: boolean
 }
 
-export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
+export const AddItemForm = React.memo(({disabled = false, ...props}: AddItemFormPropsType) => {
     let [inputValue, setInputValue] = useState('')
     //Error setter ========================================================================
     let [error, setError] = useState<string | null>(null)
@@ -35,10 +36,11 @@ export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
     return (
         <div>
             <TextField value={inputValue}
-                   onChange={onChangeInputHandler}
-                   onKeyPress={onKeyPressInpitHandler}
-                   type="text"
-                   // className={error ? 'error' : ''}
+                       disabled={disabled}
+                       onChange={onChangeInputHandler}
+                       onKeyPress={onKeyPressInpitHandler}
+                       type="text"
+                // className={error ? 'error' : ''}
                        size={'small'}
                        variant={'outlined'}
                        error={!!error}
@@ -46,8 +48,8 @@ export const AddItemForm = React.memo((props: AddItemFormPropsType) => {
                        label={'Type value'}
             />
 
-            <IconButton onClick={onClickItemAdder} size={'medium'}>
-                <AddCircleOutline fontSize={'inherit'} />
+            <IconButton onClick={onClickItemAdder} size={'medium'} disabled={disabled}>
+                <AddCircleOutline fontSize={'inherit'}/>
             </IconButton>
             {/*Заменено helperText'ом*/}
             {/*{error && <div className='error-message'>{error}</div>}*/}

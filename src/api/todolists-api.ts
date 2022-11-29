@@ -111,4 +111,17 @@ export const todolistsAPI = {
     },
 }
 
+export type LoginParamsType = {
+    email: string,
+    password: string,
+    rememberMe: boolean,
+    captcha?: string
+}
+
+export const authAPI = {
+    login(data: LoginParamsType) {
+        return instance.post<ResponseType<{ userId: number }>>('auth/login', data)
+    }
+}
+
 

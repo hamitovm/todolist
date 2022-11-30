@@ -2,7 +2,8 @@ import {appReducer, AppStatusStateType, RequestStatusType, setAppErrorAC, setApp
 
 let startState: AppStatusStateType = {
     status: 'idle',
-    error: null
+    error: null,
+    isInitialized: false
 }
 
 test('error must be set', () => {

@@ -1,7 +1,10 @@
 import {Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Grid, TextField} from "@mui/material";
 import {useFormik} from "formik";
 import {useAppDispatch} from "../../state/hooks";
-import {loginTC} from "./login-reducer";
+import {loginTC} from "./auth-reducer";
+import {useSelector} from "react-redux";
+import {AppRootStateType} from "../../app/store";
+import {Navigate} from "react-router-dom";
 
 type FormikErrorType = {
     email?: string
@@ -12,6 +15,9 @@ type FormikErrorType = {
 export const Login = () => {
     const dispatch = useAppDispatch()
 
+
+    const isLoggedIn = useSelector<AppRootStateType, boolean>(state => state.auth.isLoggedIn)
+    // console.log(`isLoggedIn - ${isLoggedIn}`)
 
     const formik = useFormik({
         initialValues: {
@@ -38,6 +44,10 @@ export const Login = () => {
             // alert(JSON.stringify(values));
         },
     })
+
+    if (isLoggedIn) {
+        return <Navigate to={'/'}/>
+    }
 
     return <Grid container justifyContent={'center'}>
         <Grid item justifyContent={'center'}>

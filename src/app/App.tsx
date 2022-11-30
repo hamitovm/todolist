@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import './App.css';
-import {AppBar, Button, IconButton, LinearProgress, Toolbar, Typography} from "@mui/material";
+import {AppBar, Button, CircularProgress, IconButton, LinearProgress, Toolbar, Typography} from "@mui/material";
 import {Menu} from "@mui/icons-material";
 import {fetchTodolistsTC, TodolistDomainType} from "../state/todolists-reducer";
 import {useSelector} from "react-redux";
@@ -8,10 +8,11 @@ import {AppRootStateType} from "./store";
 import {useAppDispatch} from "../state/hooks";
 import {ErrorSnackbar} from "../components/ErrorSnackBar/ErrorSnackBar";
 import {TaskType} from "../api/todolists-api";
-import {RequestStatusType} from "./app-reducer";
-import {Routes, Route} from "react-router-dom";
+import {initializeAppTC, RequestStatusType} from "./app-reducer";
+import {Routes, Route, Navigate} from "react-router-dom";
 import {TodoLists} from "../features/TodoLists/TodoLists";
 import {Login} from "../features/Login/Login";
+import {logoutTC} from "../features/Login/auth-reducer";
 
 export type TasksObjType = {
     [key: string]: Array<TaskType>
@@ -26,20 +27,25 @@ function App({demo = false}: PropsType) {
 
     //Общий диспатч редакса
     const dispatch = useAppDispatch()
-
-    //Доставание стейта, в типизации первым параметром указывается тип стейта, вторым того, что берется из него
-    const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
-
+    const isInitialized = useSelector<AppRootStateType, boolean>(state => state.app.isInitialized)
+    const isLoggedIn = useSelector<AppRootStateType, boolean>(state => state.auth.isLoggedIn)
+    useEffect(()=> {
+        dispatch(initializeAppTC())
+    }, [])
     const requestStatus = useSelector<AppRootStateType, RequestStatusType>(state => state.app.status)
     // const tasks = useSelector<AppRootStateType, TasksType>(state => state.tasks)
 
-    useEffect(() => {
-        //При demo === true диспатч не выполнится
-        if (demo) {
-            return
-        }
-        dispatch(fetchTodolistsTC())
-    }, [dispatch])
+    const onLogoutClickHandler = useCallback(()=> {
+        dispatch(logoutTC())
+    }, [isLoggedIn])
+
+    if (!isInitialized) {
+        return <div style={{position: 'fixed', top: '30%', width: '100%', textAlign: 'center'}}>
+            <CircularProgress/>
+        </div>
+    }
+
+
 
 
     return (
@@ -55,7 +61,8 @@ function App({demo = false}: PropsType) {
                             <Typography variant="h6">
                                 Todolist
                             </Typography>
-                            <Button color={'inherit'}>Login</Button>
+                            {isLoggedIn && <Button color={'inherit'} onClick={onLogoutClickHandler}>Logout</Button>}
+                            {/*<Button color={'inherit'}>Login</Button>*/}
                         </Toolbar>
                         {requestStatus === "loading" && <LinearProgress/>}
                     </AppBar>

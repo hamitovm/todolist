@@ -1,11 +1,12 @@
 import {Container, Grid, Paper} from "@mui/material";
 import {TodoList} from "../../TodoList";
-import React, {useCallback} from "react";
+import React, {useCallback, useEffect} from "react";
 import {useSelector} from "react-redux";
 import {AppRootStateType} from "../../app/store";
-import {addTodolistTC, TodolistDomainType} from "../../state/todolists-reducer";
+import {addTodolistTC, fetchTodolistsTC, TodolistDomainType} from "../../state/todolists-reducer";
 import {AddItemForm} from "../../components/AddItemForm/AddItemForm";
 import {useAppDispatch} from "../../state/hooks";
+import {Navigate} from "react-router-dom";
 
 
 type PropsType = {
@@ -14,9 +15,21 @@ type PropsType = {
 
 export const TodoLists = ({demo = false}: PropsType) => {
 
+    const isLoggedIn = useSelector<AppRootStateType, boolean>(state => state.auth.isLoggedIn)
+
+
     //Общий диспатч редакса
     const dispatch = useAppDispatch()
 
+    useEffect(() => {
+        //При demo === true диспатч не выполнится
+        if (demo) {
+            return
+        }
+        dispatch(fetchTodolistsTC())
+    }, [dispatch])
+
+    //Доставание стейта, в типизации первым параметром указывается тип стейта, вторым того, что берется из него
     const todolists = useSelector<AppRootStateType, Array<TodolistDomainType>>(state => state.todolists)
 
     //FOR NEW TODOLIST==============================================================
@@ -24,6 +37,10 @@ export const TodoLists = ({demo = false}: PropsType) => {
         // const action = addTodolistAC(todolistInputValue)
         dispatch(addTodolistTC(todolistInputValue))
     }, [dispatch])
+
+    if (!isLoggedIn) {
+        return <Navigate to={'/login'}/>
+    }
 
     return (
         <Container fixed>

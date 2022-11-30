@@ -4,12 +4,14 @@ import {TasksActionType, tasksReducer} from "../state/tasks-reducer";
 import thunkMiddleware, {ThunkAction, ThunkDispatch} from "redux-thunk";
 import {UserActionType} from "../state/user-reducer";
 import {appReducer} from "./app-reducer";
+import {authReducer} from "../features/Login/auth-reducer";
 
 //Комбинируются разные редюсеры в один, в качестве свойства - ветка стейта, для которой редюсер предназначен
 export const rootReducer = combineReducers({
     todolists: todolistsReducer,
     tasks: tasksReducer,
-    app: appReducer
+    app: appReducer,
+    auth: authReducer
 })
 //автоматическая типизация стейта через ReturnType<typeof --->
 export type AppRootStateType = ReturnType<typeof rootReducer>
